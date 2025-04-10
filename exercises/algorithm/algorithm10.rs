@@ -1,6 +1,6 @@
 /*
-	graph
-	This problem requires you to implement a basic graph functio
+    graph
+    This problem requires you to implement a basic graph functio
 */
 // I AM NOT DONE
 
@@ -29,7 +29,24 @@ impl Graph for UndirectedGraph {
         &self.adjacency_table
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
+        let (node1, node2, weight) = edge;
+
+        // 确保两个节点都存在
+        self.add_node(node1);
+        self.add_node(node2);
+
+        // 获取邻接表可变引用
+        let adj_table = self.adjacency_table_mutable();
+
+        // 添加双向边
+        adj_table
+            .get_mut(node1)
+            .unwrap()
+            .push((node2.to_string(), weight));
+        adj_table
+            .get_mut(node2)
+            .unwrap()
+            .push((node1.to_string(), weight));
     }
 }
 pub trait Graph {
@@ -37,12 +54,16 @@ pub trait Graph {
     fn adjacency_table_mutable(&mut self) -> &mut HashMap<String, Vec<(String, i32)>>;
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
     fn add_node(&mut self, node: &str) -> bool {
-        //TODO
-		true
+        let node_str = node.to_string();
+        // 检查节点是否存在
+        if self.adjacency_table().contains_key(&node_str) {
+            false
+        } else {
+            self.adjacency_table_mutable().insert(node_str, Vec::new());
+            true
+        }
     }
-    fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
-    }
+    fn add_edge(&mut self, edge: (&str, &str, i32));
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
     }
@@ -82,3 +103,4 @@ mod test_undirected_graph {
         }
     }
 }
+
